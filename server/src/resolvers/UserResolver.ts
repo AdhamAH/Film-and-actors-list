@@ -16,7 +16,7 @@ export class UserResolver {
         if(!user){
             return {
                 errors:[{
-                    field: 'user',
+                    field: 'Users',
                     message: "The ID provided doesn't exist"
                 }
                 ]
@@ -31,8 +31,8 @@ export class UserResolver {
         if(!user){
             return {
                 errors:[{
-                    field: 'user',
-                    message: "The user provided doesn't exist"
+                    field: 'Users',
+                    message: "The username provided doesn't exist"
                 }
                 ]
             }
