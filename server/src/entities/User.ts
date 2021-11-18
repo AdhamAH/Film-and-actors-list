@@ -24,11 +24,11 @@ export class User extends BaseEntity{
         })})
     password: string;
 
-    @Field(() => String)
+    @Field(() => Date)
     @CreateDateColumn()
     createdAt: Date;
 
-    @Field(() => String)
+    @Field(() => Date)
     @UpdateDateColumn()
     updatedAt: Date;
 

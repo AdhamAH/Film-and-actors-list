@@ -10,6 +10,36 @@ export class UserResolver {
     users() {
         return getRepository(User).find();
     }
+    @Query(() => UserResponse)
+    async getUserByID(@Arg("id") id: number):Promise<UserResponse> {
+        const user = await User.findOne({ where: { id }});
+        if(!user){
+            return {
+                errors:[{
+                    field: 'user',
+                    message: "The ID provided doesn't exist"
+                }
+                ]
+            }
+        } else {
+            return {user}
+        }
+    }
+    @Query(()=>UserResponse)
+    async getUserByName(@Arg('name' )username:string):Promise<UserResponse>{
+        const user = await User.findOne({ where: { username }});
+        if(!user){
+            return {
+                errors:[{
+                    field: 'user',
+                    message: "The user provided doesn't exist"
+                }
+                ]
+            }
+        } else {
+            return {user}
+        }
+    }
     @Mutation(() => UserResponse)
     async createUser(@Arg("data") data: CreateUserInput):Promise<UserResponse> {
         const user = User.create(data);
