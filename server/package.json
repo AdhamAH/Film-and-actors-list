@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon -w src --ext ts --exec ts-node index.ts"
+    "start": "nodemon -w src --ext ts --exec ts-node src/index.ts"
   },
   "repository": {
     "type": "git",
@@ -28,6 +28,7 @@
     "reflect-metadata": "^0.1.13",
     "sqlite3": "^5.0.2",
     "type-graphql": "^1.1.1",
-    "typeorm": "^0.2.40"
+    "typeorm": "^0.2.40",
+    "typeorm-encrypted": "^0.6.0"
   }
 }

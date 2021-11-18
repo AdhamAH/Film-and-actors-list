@@ -1,19 +1,19 @@
 import "reflect-metadata";
 require('dotenv').config();
+import {UserResolver} from "./resolvers/UserResolver";
 import {buildSchema} from "type-graphql";
 import {createConnection} from "typeorm";
 import {ApolloServer} from "apollo-server";
-import {TestResolver} from "./resolvers/TestResolver";
 
-async function main() {
-  await createConnection()
+ async function main() {
+   await createConnection()
     const schema = await buildSchema({
-        resolvers: [TestResolver],
-        validate:false
+        resolvers: [UserResolver],
+      validate:false
     })
     const server = new ApolloServer({ schema })
-    const PORT = process.env.PORT||4000
-    await server.listen(PORT)
+    await server.listen(process.env.PORT)
+     const PORT = process.env.PORT||4000
     console.log(`Server has started at ${PORT}!`)
 }
 main().catch((err) => {
