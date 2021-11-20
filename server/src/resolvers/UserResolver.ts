@@ -56,7 +56,6 @@ export class UserResolver {
     async logIn(@Arg("data") data:CreateUserInput,
                 @Ctx(){req}:MyCtx):Promise<UserResponse>{
         const user = await User.findOne({username:data.username})
-        console.log(req.session)
         if(!user){
             return {
                 errors:[{
