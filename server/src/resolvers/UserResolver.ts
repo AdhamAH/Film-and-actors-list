@@ -52,7 +52,7 @@ export class UserResolver {
             return {user}
         }
     }
-    @Query(()=>UserResponse)
+    @Mutation(()=>UserResponse)
     async logIn(@Arg("data") data:CreateUserInput,
                 @Ctx(){req}:MyCtx):Promise<UserResponse>{
         const user = await User.findOne({username:data.username})

@@ -20,14 +20,15 @@ import {
 
 
  async function main() {
-   await createConnection()
+  const connection = await createConnection()
+   await  connection.runMigrations()
      const RedisStore = connectRedis(session)
      const redisClient = redis.createClient()
      const app = express();
 
      app.use(
          cors({
-             origin: ["https://studio.apollographql.com"],
+             origin: ["http://localhost:3000"],
              credentials: true,
          })
      );
