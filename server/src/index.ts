@@ -14,21 +14,28 @@ import {
     ApolloServerPluginLandingPageDisabled,
     ApolloServerPluginLandingPageGraphQLPlayground
 } from "apollo-server-core";
+import {User} from "./entities/User";
+import {Films} from "./entities/Films";
 
 
 
 
 
  async function main() {
-  const connection = await createConnection()
+  const connection = await createConnection({
+      "type": "sqlite",
+      "database": "./db.sqlite3",
+      "entities": [User, Films],
+      "synchronize": true
+  })
    await  connection.runMigrations()
      const RedisStore = connectRedis(session)
-     const redisClient = redis.createClient()
+     const redisClient = redis.createClient(process.env.REDIS_URL as string)
      const app = express();
 
      app.use(
          cors({
-             origin: ["http://localhost:3000"],
+             origin: [process.env.CLIENT_URL as string],
              credentials: true,
          })
      );

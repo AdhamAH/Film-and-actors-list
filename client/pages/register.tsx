@@ -1,21 +1,22 @@
 import React, { ChangeEvent, useState } from 'react'
 import { Button, Paper, TextField, Typography } from '@mui/material'
-import {  gql, useMutation } from '@apollo/client'
+import { gql, useMutation } from '@apollo/client'
 
 const REGISTER = gql`
-  mutation CreateUser($username: String!, $password:String!){
-  createUser(data:{username:$username, password:$password}){
-  errors{
-      message
-    }
-    user{
-      username
+  mutation CreateUser($username: String!, $password: String!) {
+    createUser(data: { username: $username, password: $password }) {
+      errors {
+        message
+      }
+      user {
+        username
+      }
     }
   }
-  }
-`;
-const Register = ():JSX.Element => {
-  const [createUser] = useMutation<{username:string, password:string}>(REGISTER)
+`
+const Register = (): JSX.Element => {
+  const [createUser] =
+    useMutation<{ username: string; password: string }>(REGISTER)
   const [formState, setFormState] = useState({ username: '', password: '' })
 
   const onChange = (event: ChangeEvent<HTMLInputElement>): void => {
@@ -39,7 +40,8 @@ const Register = ():JSX.Element => {
         variant={'h3'}
         align={'center'}
       >
-        Welcome to <br/>Films and Actors List
+        Welcome to <br />
+        Films and Actors List
       </Typography>
       <Typography
         sx={{
@@ -52,15 +54,17 @@ const Register = ():JSX.Element => {
       >
         Please enter your username and password to register
       </Typography>
-      <form onSubmit={async (e)=>{
-        e.preventDefault()
-        try{
-         await createUser({variables:formState})
-        } catch (error){
-          // eslint-disable-next-line no-console
-          console.log(error)
-        }
-      }}>
+      <form
+        onSubmit={async (e) => {
+          e.preventDefault()
+          try {
+            await createUser({ variables: formState })
+          } catch (error) {
+            // eslint-disable-next-line no-console
+            console.log(error)
+          }
+        }}
+      >
         <TextField
           color="primary"
           variant="outlined"
@@ -85,7 +89,9 @@ const Register = ():JSX.Element => {
           required
           sx={{ marginBottom: '1.5rem' }}
         />
-        <Button fullWidth variant={'contained'} type={'submit'}>Register</Button>
+        <Button fullWidth variant={'contained'} type={'submit'}>
+          Register
+        </Button>
       </form>
     </Paper>
   )
