@@ -2,22 +2,21 @@ import React, { ChangeEvent, useState } from 'react'
 import { Button, Paper, TextField, Typography } from '@mui/material'
 import { gql, useMutation } from '@apollo/client'
 
-
 const LOGIN = gql`
-  mutation  Login($username: String!, $password:String!){
-  logIn(data:{username:$username, password:$password}){
-  errors{
-      message
-    }
-    user{
-      username
+  mutation Login($username: String!, $password: String!) {
+    logIn(data: { username: $username, password: $password }) {
+      errors {
+        message
+      }
+      user {
+        username
+      }
     }
   }
-  }
-`;
+`
 const Login = (): JSX.Element => {
   const [formState, setFormState] = useState({ username: '', password: '' })
-const [login] = useMutation(LOGIN)
+  const [login] = useMutation(LOGIN)
   const onChange = (event: ChangeEvent<HTMLInputElement>): void => {
     event.preventDefault()
     setFormState({ ...formState, [event.target.name]: event.target.value })
@@ -39,7 +38,8 @@ const [login] = useMutation(LOGIN)
         variant={'h3'}
         align={'center'}
       >
-        Welcome to <br/>Films and Actors List
+        Welcome to <br />
+        Films and Actors List
       </Typography>
       <Typography
         sx={{
@@ -49,18 +49,20 @@ const [login] = useMutation(LOGIN)
         variant={'h6'}
         color={'secondary'}
         align={'center'}
-        >
+      >
         Please enter your username and password to login
       </Typography>
-      <form onSubmit={async (e)=>{
-        e.preventDefault()
-        try{
-          await login({variables:formState})
-        } catch (error){
-          // eslint-disable-next-line no-console
-          console.log(error)
-        }
-      }}>
+      <form
+        onSubmit={async (e) => {
+          e.preventDefault()
+          try {
+            await login({ variables: formState })
+          } catch (error) {
+            // eslint-disable-next-line no-console
+            console.log(error)
+          }
+        }}
+      >
         <TextField
           color="primary"
           variant="outlined"
@@ -85,7 +87,9 @@ const [login] = useMutation(LOGIN)
           required
           sx={{ marginBottom: '1.5rem' }}
         />
-        <Button fullWidth variant={'contained'} type={'submit'}>Login</Button>
+        <Button fullWidth variant={'contained'} type={'submit'}>
+          Login
+        </Button>
       </form>
     </Paper>
   )

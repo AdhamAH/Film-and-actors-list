@@ -1,0 +1,76 @@
+version: "3"
+
+services:
+  redis:
+    image: redis
+    container_name: cache
+    expose:
+      - 6379
+  nginx:
+    image: nginx
+    restart: unless-stopped
+    build: 
+      context: .
+      dockerfile: nginx.dockerfile
+    ports:
+      - 80:80
+    volumes:
+      - type: bind
+        read_only: true
+        source: ./tools/nginx/nginx.conf
+        target: /etc/nginx/templates/nginx.conf.tamplete
+      - type: bind
+        read_only: true
+        source: ./tools/nginx/proxy.conf
+        target: /etc/nginx/templates/proxy.conf.tamplete
+      - type: bind
+        read_only: true
+        source: ./tools/nginx/frontend.conf
+        target: /etc/nginx/templates/frontend.conf.template
+      - type: bind
+        read_only: true
+        source: ./tools/nginx/backend.conf
+        target: /etc/nginx/templates/backend.conf.template
+    environment:
+      BACKEND_API: "graphql"
+      BACKEND_HOST: "server:4000"
+      FRONTEND_HOST: "client:3000"
+      NGINX_ENVSUBST_OUTPUT_DIR: "/etc/nginx"
+
+  client:
+    image: client:${TAG:-latest}
+    restart: unless-stopped
+    ports:
+      - 3000:3000
+    build:
+      context: .
+      dockerfile: client.dockerfile
+    networks:
+      default:
+        aliases:
+          - fe
+  server:
+    image: server:${TAG:-latest}
+    build:
+      context: .
+      dockerfile: server.dockerfile
+    networks: 
+      default:
+        aliases:
+          - be
+    depends_on:
+      - redis
+    ports: 
+      - "4000:4000"
+    links:
+      - redis
+    environment:
+      REDIS_URL: redis://cache
+      NODE_ENV: '${NODE_ENV}'
+      CLIENT_URL: '${CLIENT_URL}'
+      PORT: '${PORT}'
+      KEY: '${KEY}'
+      IV: '${IV}'
+      SECRET: '${SECRET}'
+    restart: unless-stopped
+

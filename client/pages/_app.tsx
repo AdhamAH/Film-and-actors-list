@@ -17,7 +17,7 @@ interface Props {
 const client = new ApolloClient({
   uri: 'http://localhost:4000/graphql',
   credentials: 'include',
-  cache: new InMemoryCache()
+  cache: new InMemoryCache(),
 })
 
 const clientSideEmotionCache = createEmotionCache()
@@ -25,17 +25,17 @@ export default function MyApp(props: Props): JSX.Element {
   const { Component, emotionCache = clientSideEmotionCache, pageProps } = props
 
   return (
-   <ApolloProvider client={client}>
-     <CacheProvider value={emotionCache}>
-       <Head>
-         <title>Films And Actors List</title>
-         <meta name="viewport" content="initial-scale=1, width=device-width" />
-       </Head>
-       <ThemeProvider theme={theme}>
-         <CssBaseline />
-         <Component {...pageProps} />
-       </ThemeProvider>
-     </CacheProvider>
-   </ApolloProvider>
+    <ApolloProvider client={client}>
+      <CacheProvider value={emotionCache}>
+        <Head>
+          <title>Films And Actors List</title>
+          <meta name="viewport" content="initial-scale=1, width=device-width" />
+        </Head>
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <Component {...pageProps} />
+        </ThemeProvider>
+      </CacheProvider>
+    </ApolloProvider>
   )
 }
