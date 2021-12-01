@@ -26,7 +26,12 @@ import {Films} from "./entities/Films";
       "type": "sqlite",
       "database": "./db.sqlite3",
       "entities": [User, Films],
-      "synchronize": true
+      "synchronize": true,
+      "migrationsTableName": "custom_migration_table",
+      "migrations": ["migration/*.js"],
+      "cli": {
+          "migrationsDir": "/src/db/migrations"
+      }
   })
    await  connection.runMigrations()
      const RedisStore = connectRedis(session)
@@ -45,7 +50,7 @@ import {Films} from "./entities/Films";
              name:'token',
              store: new RedisStore({ client: redisClient, disableTouch:true }),
              cookie:{
-               maxAge: 1000*60*60,
+               maxAge: 1000*60*60*2,
                httpOnly: true,
                  sameSite: 'lax',
                secure: process.env.NODE_ENV!=='development'

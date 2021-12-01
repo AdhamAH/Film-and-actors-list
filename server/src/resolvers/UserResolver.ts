@@ -55,25 +55,34 @@ export class UserResolver {
     @Mutation(()=>UserResponse)
     async logIn(@Arg("data") data:CreateUserInput,
                 @Ctx(){req}:MyCtx):Promise<UserResponse>{
-        const user = await User.findOne({username:data.username})
-        if(!user){
-            return {
-                errors:[{
-                    field: 'Login',
-                    message: "The information provided is not correct, Try again please!"
-                }]
-            }
-        } else {
-            if(data.password===user.password){
-                req.session.userID=user.id
-                return {user}
-            }else{
+        try{
+            const user = await User.findOne({username: data.username})
+            if (!user) {
                 return {
-                    errors:[{
+                    errors: [{
                         field: 'Login',
                         message: "The information provided is not correct, Try again please!"
                     }]
                 }
+            } else {
+                if (data.password === user.password) {
+                    req.session.userID = user.id
+                    return {user}
+                } else {
+                    return {
+                        errors: [{
+                            field: 'Login',
+                            message: "The information provided is not correct, Try again please!"
+                        }]
+                    }
+                }
+            }
+        }catch (error){
+            return {
+                errors:[{
+                    field: 'login',
+                    message: error.message
+                }]
             }
         }
     }
