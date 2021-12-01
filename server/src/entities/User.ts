@@ -1,6 +1,16 @@
+import {Films} from "./Films";
+
 require('dotenv').config();
 import {Field, ObjectType} from "type-graphql";
-import {BaseEntity, Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn} from "typeorm";
+import {
+    BaseEntity,
+    Column,
+    CreateDateColumn,
+    Entity,
+    OneToMany,
+    PrimaryGeneratedColumn,
+    UpdateDateColumn
+} from "typeorm";
 import { EncryptionTransformer } from 'typeorm-encrypted';
 
 
@@ -15,14 +25,18 @@ export class User extends BaseEntity{
     @Column({ unique: true })
     username!: string;
 
-    @Field()
+
     @Column({transformer: new EncryptionTransformer({
             key: process.env.KEY as string,
             algorithm: 'aes-256-cbc',
             ivLength: 16,
             iv: process.env.IV
         })})
-    password: string;
+    password!: string;
+
+    @Field (()=>Films)
+    @OneToMany(()=>Films, film=>film.creator)
+    films:Films[]
 
     @Field(() => Date)
     @CreateDateColumn()

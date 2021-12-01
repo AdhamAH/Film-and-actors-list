@@ -7,4 +7,5 @@ export class CreateFilmInput{
 
     @Field()
     playTime: Date
+
 }

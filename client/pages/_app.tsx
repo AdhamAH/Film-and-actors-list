@@ -7,6 +7,7 @@ import createEmotionCache from '../helpers/createEmotionCache'
 import { EmotionCache } from '@emotion/cache'
 import theme from '../helpers/theme'
 import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client'
+import Header from '../components/Header'
 
 interface Props {
   Component: React.ElementType
@@ -33,6 +34,7 @@ export default function MyApp(props: Props): JSX.Element {
         </Head>
         <ThemeProvider theme={theme}>
           <CssBaseline />
+          <Header />
           <Component {...pageProps} />
         </ThemeProvider>
       </CacheProvider>
