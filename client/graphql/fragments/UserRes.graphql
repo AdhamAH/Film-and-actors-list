@@ -1,0 +1,6 @@
+fragment UserRes on User {
+  id
+  username
+  createdAt
+  updatedAt
+}

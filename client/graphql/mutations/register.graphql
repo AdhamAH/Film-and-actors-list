@@ -1,11 +1,13 @@
-mutation CreateUser($username: String!, $password: String!) {
-  createUser(data: { username: $username, password: $password }) {
+mutation CreateUser($username: String!, $password: String!, $email: String!) {
+  createUser(
+    data: { username: $username, password: $password, email: $email }
+  ) {
     errors {
       field
       message
     }
     user {
-      username
+      ...UserRes
     }
   }
 }

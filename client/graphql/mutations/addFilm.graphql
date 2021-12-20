@@ -1,0 +1,11 @@
+mutation AddFilm($title: String!, $playTime: DateTime!) {
+  addFilm(data: { title: $title, playTime: $playTime }) {
+    errors {
+      field
+      message
+    }
+    film {
+      ...FilmRes
+    }
+  }
+}

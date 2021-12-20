@@ -9,32 +9,32 @@ import {
   TextField,
   Typography,
 } from '@mui/material'
-import { useLoginMutation, useMeQuery } from '../generated/graphql'
-import { useRouter } from 'next/router'
 import CloseIcon from '@mui/icons-material/Close'
+import { useAddFilmMutation } from '../generated/graphql'
+import { useRouter } from 'next/router'
+import { isAuth } from '../helpers/isAuth'
+import { DateTimePicker } from '@mui/lab'
 
-const Login = (): JSX.Element => {
+const CreateFilm = (): JSX.Element => {
   const router = useRouter()
-  const { refetch } = useMeQuery()
+  isAuth()
   const [formControl, setFormControl] = useState({ error: false, message: '' })
-  const [formState, setFormState] = useState({ username: '', password: '' })
-  const [login] = useLoginMutation()
+  const [formState, setFormState] = useState({
+    title: '',
+    playTime: new Date(),
+  })
+  const [addFilm] = useAddFilmMutation()
   const onSubmit = async (event: FormEvent): Promise<void> => {
     event.preventDefault()
-    const response = await login({ variables: formState })
+    const response = await addFilm({ variables: formState })
     try {
-      if (response.data.logIn.errors) {
+      if (response.data.addFilm.errors) {
         setFormControl({
           error: true,
-          message: `${response.data.logIn.errors[0].message}`,
+          message: `${response.data.addFilm.errors[0].message}`,
         })
-      } else if (response.data.logIn.user) {
-        await refetch()
-        if (typeof router.query.next === 'string') {
-          router.push(router.query.next).then()
-        } else {
-          router.push('/').then()
-        }
+      } else if (response.data.addFilm.film) {
+        await router.push('/')
       }
     } catch (error) {
       setFormControl({
@@ -45,12 +45,17 @@ const Login = (): JSX.Element => {
   }
   const onChange = (event: ChangeEvent<HTMLInputElement>): void => {
     event.preventDefault()
+
     setFormControl({
       error: false,
       message: '',
     })
     setFormState({ ...formState, [event.target.name]: event.target.value })
   }
+  const onChangeDate = (value) => {
+    setFormState({ ...formState, playTime: value.toJSON() })
+  }
+
   return (
     <Box
       sx={{
@@ -73,8 +78,7 @@ const Login = (): JSX.Element => {
           variant={'h3'}
           align={'center'}
         >
-          Welcome to <br />
-          Films and Actors List
+          Add Film
         </Typography>
         <Typography
           sx={{
@@ -85,7 +89,7 @@ const Login = (): JSX.Element => {
           color={'secondary'}
           align={'center'}
         >
-          Please enter your username and password to login
+          Please enter the title and the playtime to add
         </Typography>
         <form onSubmit={onSubmit}>
           <TextField
@@ -94,25 +98,27 @@ const Login = (): JSX.Element => {
             variant="outlined"
             fullWidth
             type="text"
-            name="username"
-            value={formState.username}
+            name="title"
+            value={formState.title}
             onChange={onChange}
-            label="username"
+            label="Title"
             required
             sx={{ marginBottom: '1.5rem' }}
           />
-          <TextField
-            error={formControl.error}
-            color="primary"
-            variant="outlined"
-            fullWidth
-            type="password"
-            name="password"
-            value={formState.password}
-            onChange={onChange}
-            label="Password"
-            required
-            sx={{ marginBottom: '1.5rem' }}
+          <DateTimePicker
+            value={formState.playTime}
+            onChange={onChangeDate}
+            label="Play Time"
+            renderInput={(params) => (
+              <TextField
+                color="primary"
+                variant="outlined"
+                fullWidth
+                {...params}
+                required
+                sx={{ marginBottom: '1.5rem' }}
+              />
+            )}
           />
           <Collapse in={formControl.error}>
             <Alert
@@ -138,7 +144,7 @@ const Login = (): JSX.Element => {
             </Alert>
           </Collapse>
           <Button fullWidth variant={'contained'} type={'submit'}>
-            Login
+            add film
           </Button>
         </form>
       </Paper>
@@ -146,4 +152,4 @@ const Login = (): JSX.Element => {
   )
 }
 
-export default Login
+export default CreateFilm

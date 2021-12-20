@@ -1,66 +1,111 @@
-import {Arg, Ctx, Mutation, Query, Resolver, UseMiddleware} from "type-graphql";
-import {Films} from "../entities/Films";
-import {CreateFilmInput} from "../inputs/createFilmInput";
-import {FilmResponse} from "../types/film.types";
-import {MyCtx} from "../types/myCtx";
-import {isAuth} from "../middleware/isAuth";
-import {getConnection} from "typeorm";
+import {
+  Arg,
+  Ctx,
+  Mutation,
+  Query,
+  Resolver,
+  UseMiddleware,
+} from 'type-graphql';
+import { getConnection, SelectQueryBuilder } from 'typeorm';
+import { Films } from '../entities/Films';
+import { CreateFilmInput } from '../inputs/createFilmInput';
+import { FilmResponse, FilmResponsePagination } from '../types/film.types';
+import { MyCtx } from '../types/myCtx';
+import { isAuth } from '../middleware/isAuth';
+import { User } from '../entities/User';
 
 @Resolver()
 export class FilmsResolver {
-    @Query(() => [Films])
-    async getAllFilms(): Promise<Films[]> {
-        try {
-            return Films.find()
-        } catch (error) {
-            throw new Error("Something went wrong!")
-        }
+  async getFilmsUserJoint(): Promise<SelectQueryBuilder<Films>> {
+    return getConnection()
+      .getRepository(Films)
+      .createQueryBuilder('f')
+      .leftJoinAndSelect('f.user', 'user');
+  }
 
-
+  @Query(() => [Films])
+  async getAllFilms(): Promise<Films[]> {
+    try {
+      const db = await this.getFilmsUserJoint();
+      return db.getMany();
+    } catch (error) {
+      throw new Error('Something went wrong!');
     }
+  }
 
-    @Query(() => [Films])
-    async getFilmsByCreationDate(
-        @Arg("limit") limit: number,
-      //  @Arg('cursor', () => String, {nullable: true}) cursor: string | null
-    ): Promise<Films[]> {
-        const getLimit = Math.min(50, limit)
-        return await getConnection().getRepository(Films).createQueryBuilder('films').
-        orderBy("createdAt", 'DESC').take(getLimit).getMany()
+  @Query(() => FilmResponsePagination)
+  async getFilmsByCreationDate(
+    @Arg('limit') limit: number,
+    @Arg('cursor', () => Number, { nullable: true }) cursor: number | 0
+  ): Promise<FilmResponsePagination> {
+    const getLimit = Math.min(50, limit);
+    const gdb = await this.getFilmsUserJoint();
+    const films = await gdb
+      .orderBy('f.createdAt', 'DESC')
+      .take(getLimit + 1)
+      .skip((cursor - 1) * getLimit)
+      .getMany();
+    return {
+      films: films.slice(0, getLimit),
+      hasMore: films.length - 1 === getLimit,
+    };
+  }
+
+  @Query(() => FilmResponse)
+  async getFilmById(@Arg('id') id: number): Promise<FilmResponse> {
+    const db = await this.getFilmsUserJoint();
+    const film = await db.where(`f.id=${id}`).getOne();
+    if (!film) {
+      return {
+        errors: [
+          {
+            field: 'Films',
+            message: "The ID provided doesn't exist",
+          },
+        ],
+      };
     }
+    return { film };
+  }
 
-    @Query(() => FilmResponse)
-    async getFilmById(@Arg("id") id: number): Promise<FilmResponse> {
-        const film = await Films.findOne({where: {id}});
-        if (!film) {
-            return {
-                errors: [{
-                    field: 'Films',
-                    message: "The ID provided doesn't exist"
-                }
-                ]
-            }
-        } else {
-            return {film}
-        }
+  @Mutation(() => Boolean)
+  @UseMiddleware(isAuth)
+  async deleteFilm(@Arg('id') id: number):Promise<boolean> {
+    try {
+      await Films.delete({ id });
+      return true;
+    } catch (error) {
+      console.error(error);
+      return false;
     }
+  }
 
-    @Mutation(() => FilmResponse)
-    @UseMiddleware(isAuth)
-    async addFilm(@Arg("data") data: CreateFilmInput,
-                  @Ctx() {req}: MyCtx): Promise<FilmResponse> {
-        const film = Films.create({...data, creatorUID: req.session.userID,})
-        try {
-            await film.save()
-            return {film}
-        } catch (error) {
-            return {
-                errors: [{
-                    field: 'Film Creation',
-                    message: error.message
-                }]
-            }
-        }
-
+  @Mutation(() => FilmResponse)
+  @UseMiddleware(isAuth)
+  async addFilm(
+    @Arg('data') data: CreateFilmInput,
+    @Ctx() { req }: MyCtx
+  ): Promise<FilmResponse> {
+    const user = await User.findOne({
+      where: `user.id= ${req.session.userID}`,
+    });
+    const film = Films.create({
+      ...data,
+      creatorUID: req.session.userID,
+      user,
+    });
+    try {
+      await film.save();
+      return { film };
+    } catch (error) {
+      return {
+        errors: [
+          {
+            field: 'Film Creation',
+            message: error.message,
+          },
+        ],
+      };
     }
+  }
 }

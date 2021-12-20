@@ -1,0 +1,8 @@
+fragment FilmRes on Films {
+  id
+  title
+  playTime
+  creatorUID
+  createdAt
+  updatedAt
+}
