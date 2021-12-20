@@ -1,0 +1,11 @@
+query GetAllFilms {
+  getAllFilms {
+    id
+    title
+    playTime
+    user {
+      id
+      username
+    }
+  }
+}

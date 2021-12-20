@@ -1,8 +1,9 @@
-import {  Response, Request} from "express";
+import { Response, Request } from 'express';
+
 interface SessionData {
-    userID: number;
+  userID: number;
 }
 export type MyCtx = {
-    req: Request & { session:SessionData };
-    res: Response;
+  req: Request & { session: SessionData };
+  res: Response;
 };

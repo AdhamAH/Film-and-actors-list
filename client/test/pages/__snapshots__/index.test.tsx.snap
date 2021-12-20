@@ -3,6 +3,26 @@
 exports[`Home page matches snapshot 1`] = `
 <DocumentFragment>
   <div>
+    <div
+      class="MuiBox-root css-i9gxme"
+    >
+      <header
+        class="MuiPaper-root MuiPaper-elevation MuiPaper-elevation4 MuiAppBar-root MuiAppBar-colorPrimary MuiAppBar-positionStatic css-hip9hq-MuiPaper-root-MuiAppBar-root"
+      >
+        <div
+          class="MuiToolbar-root MuiToolbar-gutters MuiToolbar-regular css-1t29gy6-MuiToolbar-root"
+        >
+          <div
+            class="MuiTypography-root MuiTypography-h6 css-fk2oxu-MuiTypography-root"
+          >
+            Films And Actors List
+          </div>
+          <p>
+            loading
+          </p>
+        </div>
+      </header>
+    </div>
     <main />
   </div>
 </DocumentFragment>

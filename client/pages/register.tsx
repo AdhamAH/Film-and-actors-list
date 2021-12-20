@@ -7,7 +7,11 @@ const Register = (): JSX.Element => {
   const router = useRouter()
 
   const [createUser] = useCreateUserMutation()
-  const [formState, setFormState] = useState({ username: '', password: '' })
+  const [formState, setFormState] = useState({
+    username: '',
+    password: '',
+    email: '',
+  })
 
   const onChange = (event: ChangeEvent<HTMLInputElement>): void => {
     event.preventDefault()
@@ -68,6 +72,18 @@ const Register = (): JSX.Element => {
             value={formState.username}
             onChange={onChange}
             label="Username"
+            required
+            sx={{ marginBottom: '1.5rem' }}
+          />
+          <TextField
+            color="primary"
+            variant="outlined"
+            fullWidth
+            type="email"
+            name="email"
+            value={formState.email}
+            onChange={onChange}
+            label="Email"
             required
             sx={{ marginBottom: '1.5rem' }}
           />
