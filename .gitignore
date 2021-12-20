@@ -76,3 +76,4 @@ typings/
 .fusebox/
 #IDE
 .idea/
+client/tsconfig.tsbuildinfo

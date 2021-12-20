@@ -10,9 +10,9 @@ import {
 } from '@apollo/client'
 import { CacheProvider } from '@emotion/react'
 import createEmotionCache from '../helpers/createEmotionCache'
-import fetch from 'cross-fetch'
+import fetch from 'isomorphic-fetch'
 const client = new ApolloClient({
-  link: new HttpLink({ uri: '/graphql', fetch }),
+  link: new HttpLink({ uri: 'http://localhost:4000/graphql', fetch }),
 
   credentials: 'include',
   cache: new InMemoryCache(),

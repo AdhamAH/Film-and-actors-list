@@ -54,12 +54,12 @@ export type FilmResponsePagination = {
 
 export type Films = {
   __typename?: 'Films'
-  createdAt: Scalars['Float']
+  createdAt: Scalars['DateTime']
   creatorUID: Scalars['Float']
   id: Scalars['Float']
   playTime: Scalars['DateTime']
   title: Scalars['String']
-  updatedAt: Scalars['Float']
+  updatedAt: Scalars['DateTime']
   user: User
 }
 
@@ -142,8 +142,8 @@ export type FilmResFragment = {
   title: string
   playTime: any
   creatorUID: number
-  createdAt: number
-  updatedAt: number
+  createdAt: any
+  updatedAt: any
 }
 
 export type UserResFragment = {
@@ -174,8 +174,8 @@ export type AddFilmMutation = {
           title: string
           playTime: any
           creatorUID: number
-          createdAt: number
-          updatedAt: number
+          createdAt: any
+          updatedAt: any
         }
       | null
       | undefined
